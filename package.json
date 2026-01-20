@@ -38,7 +38,7 @@
           "arch": ["x64"]
         }
       ],
-      "icon": "app/icon.png"
+      "icon": "app/icon.ico"
     },
     "nsis": {
       "oneClick": false,
