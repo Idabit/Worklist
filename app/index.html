@@ -225,14 +225,18 @@
     .task-section.done .task-table td { border-color: var(--section-done-border); }
     .task-row { transition: background-color 0.15s; }
     .task-row:hover { background: var(--bg-table-row-hover); }
-    .task-row.done { opacity: 0.6; }
-    .task-row.overdue { background: var(--alert-overdue); border-left: 3px solid var(--alert-overdue-border); }
-    .task-row.due-today { background: var(--alert-today); border-left: 3px solid var(--alert-today-border); }
-    .task-row.due-soon { background: var(--alert-soon); border-left: 3px solid var(--alert-soon-border); }
+    
+    /* Status-based row colors */
+    .task-row.status-pending { background: var(--status-pending-bg); border-left: 3px solid var(--status-pending-border); }
+    .task-row.status-in-progress { background: var(--status-active-bg); border-left: 3px solid var(--status-active-border); }
+    .task-row.status-done { background: var(--section-done-bg); border-left: 3px solid var(--section-done-border); opacity: 0.9; }
+    
     .task-row.focused { outline: 2px solid var(--bg-sidebar-active); outline-offset: -2px; }
 
     .due-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 8px; }
     .due-badge.overdue { background: var(--alert-overdue); color: #dc2626; border: 1px solid var(--alert-overdue-border); }
+    .due-badge.today { background: var(--alert-today); color: #d97706; border: 1px solid var(--alert-today-border); }
+    .due-badge.soon { background: var(--alert-soon); color: #ea580c; border: 1px solid var(--alert-soon-border); }
     .due-badge.today { background: var(--alert-today); color: #d97706; border: 1px solid var(--alert-today-border); }
     .due-badge.soon { background: var(--alert-soon); color: #ea580c; border: 1px solid var(--alert-soon-border); }
 
@@ -727,15 +731,15 @@
         const updateSubFn = forCategory ? (tid, sid, f, v) => updateSubtaskInCategory(category, tid, sid, f, v) : updateSubtask;
         const deleteSubFn = forCategory ? (tid, sid) => deleteSubtaskInCategory(category, tid, sid) : deleteSubtask;
         
-        // NEW: Due date class and focus
-        const dueDateClass = getDueDateClass(task);
+        // Status-based class for row coloring
+        const statusClass = `status-${task.status}`;
         const currentTasks = tasks[activeTab] || [];
         const taskIndex = currentTasks.findIndex(t => t.id === task.id);
         const isFocused = taskIndex === focusedTaskIndex;
 
         return (
           <React.Fragment key={task.id}>
-            <tr className={`task-row ${isDone ? 'done' : ''} ${dueDateClass} ${isFocused ? 'focused' : ''}`}>
+            <tr className={`task-row ${statusClass} ${isFocused ? 'focused' : ''}`}>
               <td style={{width: '50px', textAlign: 'center'}}>
                 <button className="expand-btn" onClick={() => toggleRow(task.id)}>
                   {isExpanded ? <ChevronDown /> : <ChevronRight />}
