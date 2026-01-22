@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline';">
-  <title>Worklist — Offline-First Task Management</title>
+  <title>Worklist v1.1.0 — Offline-First Task Management</title>
   <script src="./react.production.min.js"></script>
   <script src="./react-dom.production.min.js"></script>
   <script src="./babel.min.js"></script>
@@ -26,60 +26,67 @@
     ::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-hover); }
     .drag-over { background-color: #3b82f6 !important; opacity: 0.7; }
 
-    /* Light Theme (Default) - Softer colors for reduced eye strain */
+    /* Warm Light Theme - Easy on the eyes */
     :root {
-      --bg-primary: #fafbfc;
-      --bg-secondary: #ffffff;
-      --bg-sidebar: #1e293b;
-      --bg-sidebar-hover: #334155;
-      --bg-sidebar-active: #2563eb;
-      --bg-input: #ffffff;
-      --bg-table-header: #f7f9fb;
-      --bg-table-row-hover: #f9fafb;
-      --bg-expanded: #fafbfc;
-      --bg-modal: #ffffff;
-      --bg-modal-overlay: rgba(15, 23, 42, 0.5);
-      --bg-badge: #f5f7f9;
-      --bg-undo: #1e293b;
+      --bg-primary: #faf8f5;
+      --bg-secondary: #fffef9;
+      --bg-sidebar: #3d3026;
+      --bg-sidebar-hover: #4a3a2e;
+      --bg-sidebar-active: #8b6f47;
+      --bg-input: #fffef9;
+      --bg-table-header: #f5f2ed;
+      --bg-table-row-hover: #f9f6f1;
+      --bg-expanded: #faf8f5;
+      --bg-modal: #fffef9;
+      --bg-modal-overlay: rgba(61, 48, 38, 0.5);
+      --bg-badge: #f5f2ed;
+      --bg-undo: #3d3026;
       
-      --text-primary: #2d3748;
-      --text-secondary: #4a5568;
-      --text-muted: #718096;
-      --text-placeholder: #a0aec0;
-      --text-sidebar: #cbd5e1;
-      --text-sidebar-muted: #64748b;
-      --text-inverse: #ffffff;
+      --text-primary: #3d3026;
+      --text-secondary: #5d4a3a;
+      --text-muted: #8b7355;
+      --text-placeholder: #a89582;
+      --text-sidebar: #e8dcc8;
+      --text-sidebar-muted: #a89582;
+      --text-inverse: #fffef9;
       
-      --border-primary: #e8ecf0;
-      --border-light: #f0f2f5;
+      --border-primary: #e8dcc8;
+      --border-light: #f0e6d6;
       
-      --scrollbar-track: #f7f9fb;
-      --scrollbar-thumb: #d1d5db;
-      --scrollbar-hover: #9ca3af;
+      --scrollbar-track: #f5f2ed;
+      --scrollbar-thumb: #c9b89a;
+      --scrollbar-hover: #a89582;
       
-      --status-pending-bg: #f7f9fb;
-      --status-pending-text: #4a5568;
-      --status-pending-border: #e8ecf0;
-      --status-active-bg: #e0f2fe;
+      --status-pending-bg: #f5f2ed;
+      --status-pending-text: #5d4a3a;
+      --status-pending-border: #e8dcc8;
+      --status-active-bg: #dbeafe;
       --status-active-text: #0369a1;
       --status-active-border: #7dd3fc;
       --status-done-bg: #d1fae5;
       --status-done-text: #065f46;
       --status-done-border: #6ee7b7;
       
-      --section-done-bg: #ecfdf5;
+      --section-done-bg: #f0fdf4;
       --section-done-border: #a7f3d0;
       --section-done-header: #d1fae5;
       
-      --priority-high-bg: #fff4ed;
-      --priority-high-border: #fcd0b5;
-      --priority-high-header: #ffe8d9;
+      --priority-high-bg: #fef2f2;
+      --priority-high-border: #fca5a5;
+      --priority-high-header: #fee2e2;
       --priority-medium-bg: #fef9e7;
       --priority-medium-border: #fde68a;
       --priority-medium-header: #fef3c7;
-      --priority-low-bg: #f7f9fb;
-      --priority-low-border: #e8ecf0;
-      --priority-low-header: #f0f2f5;
+      --priority-low-bg: #f5f2ed;
+      --priority-low-border: #e8dcc8;
+      --priority-low-header: #f0e6d6;
+      
+      --alert-overdue: #fee2e2;
+      --alert-overdue-border: #ef4444;
+      --alert-today: #fef9e7;
+      --alert-today-border: #f59e0b;
+      --alert-soon: #fff7ed;
+      --alert-soon-border: #fb923c;
     }
 
     /* Dark Theme */
@@ -211,6 +218,15 @@
     .task-row { transition: background-color 0.15s; }
     .task-row:hover { background: var(--bg-table-row-hover); }
     .task-row.done { opacity: 0.6; }
+    .task-row.overdue { background: var(--alert-overdue); border-left: 3px solid var(--alert-overdue-border); }
+    .task-row.due-today { background: var(--alert-today); border-left: 3px solid var(--alert-today-border); }
+    .task-row.due-soon { background: var(--alert-soon); border-left: 3px solid var(--alert-soon-border); }
+    .task-row.focused { outline: 2px solid var(--bg-sidebar-active); outline-offset: -2px; }
+
+    .due-badge { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+    .due-badge.overdue { background: var(--alert-overdue); color: #dc2626; border: 1px solid var(--alert-overdue-border); }
+    .due-badge.today { background: var(--alert-today); color: #d97706; border: 1px solid var(--alert-today-border); }
+    .due-badge.soon { background: var(--alert-soon); color: #ea580c; border: 1px solid var(--alert-soon-border); }
 
     .expand-btn { padding: 6px; background: none; border: none; cursor: pointer; color: var(--text-muted); border-radius: 4px; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
     .expand-btn:hover { background: var(--bg-badge); color: var(--text-primary); }
@@ -382,6 +398,7 @@
       const [saveStatus, setSaveStatus] = useState('saved');
       const [settings, setSettings] = useState(loadSettings());
       const [showSlackModal, setShowSlackModal] = useState(false);
+      const [focusedTaskIndex, setFocusedTaskIndex] = useState(-1);
       const [showShareModal, setShowShareModal] = useState(false);
       const [shareCategory, setShareCategory] = useState(null);
       const [slackStatus, setSlackStatus] = useState(null);
@@ -419,6 +436,88 @@
       const toggleTheme = () => {
         setSettings({ ...settings, theme: settings.theme === 'light' ? 'dark' : 'light' });
       };
+
+      // Due date helpers
+      const isOverdue = (task) => {
+        if (!task.due || task.status === 'done') return false;
+        return new Date(task.due) < new Date().setHours(0,0,0,0);
+      };
+
+      const isDueToday = (task) => {
+        if (!task.due || task.status === 'done') return false;
+        const today = new Date().setHours(0,0,0,0);
+        const due = new Date(task.due).setHours(0,0,0,0);
+        return due === today;
+      };
+
+      const isDueSoon = (task) => {
+        if (!task.due || task.status === 'done') return false;
+        const today = new Date().setHours(0,0,0,0);
+        const due = new Date(task.due).setHours(0,0,0,0);
+        const threeDays = 3 * 24 * 60 * 60 * 1000;
+        return due > today && due <= today + threeDays;
+      };
+
+      const getDueDateBadge = (task) => {
+        if (isOverdue(task)) return <span className="due-badge overdue">⚠️ Overdue</span>;
+        if (isDueToday(task)) return <span className="due-badge today">📅 Due Today</span>;
+        if (isDueSoon(task)) return <span className="due-badge soon">⏰ Due Soon</span>;
+        return null;
+      };
+
+      const getDueDateClass = (task) => {
+        if (isOverdue(task)) return 'overdue';
+        if (isDueToday(task)) return 'due-today';
+        if (isDueSoon(task)) return 'due-soon';
+        return '';
+      };
+
+      // Keyboard shortcuts
+      useEffect(() => {
+        const handleKeyDown = (e) => {
+          // Ctrl/Cmd + K: Add task
+          if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+            e.preventDefault();
+            if (!activeTab.startsWith('⚡')) {
+              addTask();
+            }
+          }
+          
+          // Arrow key navigation
+          const currentTasks = tasks[activeTab] || [];
+          if (currentTasks.length > 0) {
+            if (e.key === 'ArrowDown') {
+              e.preventDefault();
+              setFocusedTaskIndex(prev => Math.min(prev + 1, currentTasks.length - 1));
+            } else if (e.key === 'ArrowUp') {
+              e.preventDefault();
+              setFocusedTaskIndex(prev => Math.max(prev - 1, 0));
+            } else if (e.key === 'Enter' && focusedTaskIndex >= 0) {
+              e.preventDefault();
+              const task = currentTasks[focusedTaskIndex];
+              toggleRow(task.id);
+            } else if (e.key === ' ' && focusedTaskIndex >= 0) {
+              e.preventDefault();
+              const task = currentTasks[focusedTaskIndex];
+              updateTask(task.id, 'status', task.status === 'done' ? 'pending' : 'done');
+            }
+          }
+          
+          // Escape: Clear focus
+          if (e.key === 'Escape') {
+            setFocusedTaskIndex(-1);
+            setExpandedRows(new Set());
+          }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+      }, [focusedTaskIndex, activeTab, tasks]);
+
+      // Reset focus when changing tabs
+      useEffect(() => {
+        setFocusedTaskIndex(-1);
+      }, [activeTab]);
 
       const pushUndo = (action) => { setUndoStack([action]); setShowUndo(true); };
 
@@ -618,10 +717,16 @@
         const addSubFn = forCategory ? (id) => addSubtaskInCategory(category, id) : addSubtask;
         const updateSubFn = forCategory ? (tid, sid, f, v) => updateSubtaskInCategory(category, tid, sid, f, v) : updateSubtask;
         const deleteSubFn = forCategory ? (tid, sid) => deleteSubtaskInCategory(category, tid, sid) : deleteSubtask;
+        
+        // NEW: Due date class and focus
+        const dueDateClass = getDueDateClass(task);
+        const currentTasks = tasks[activeTab] || [];
+        const taskIndex = currentTasks.findIndex(t => t.id === task.id);
+        const isFocused = taskIndex === focusedTaskIndex;
 
         return (
           <React.Fragment key={task.id}>
-            <tr className={`task-row ${isDone ? 'done' : ''}`}>
+            <tr className={`task-row ${isDone ? 'done' : ''} ${dueDateClass} ${isFocused ? 'focused' : ''}`}>
               <td style={{width: '50px', textAlign: 'center'}}>
                 <button className="expand-btn" onClick={() => toggleRow(task.id)}>
                   {isExpanded ? <ChevronDown /> : <ChevronRight />}
@@ -655,6 +760,7 @@
               )}
               <td style={{width: '140px'}}>
                 <input type="date" className="date-input" value={task.due} onChange={(e) => updateFn(task.id, 'due', e.target.value)} />
+                {getDueDateBadge(task)}
               </td>
               <td style={{width: '50px', textAlign: 'center'}}>
                 <button className="delete-btn" onClick={() => deleteFn(task.id)}><X /></button>
@@ -842,7 +948,7 @@
               <h1>{isPriorityView ? '⚡ All Tasks by Priority' : activeTab}</h1>
               <div className="header-buttons">
                 {!isPriorityView && settings.slackWebhook && <button className="btn btn-secondary" onClick={() => { setShareCategory(activeTab); setShowShareModal(true); }}><SlackIcon /> Share</button>}
-                {!isPriorityView && <button className="btn btn-primary" onClick={addTask}><Plus /> Add Task</button>}
+                {!isPriorityView && <button className="btn btn-primary" onClick={addTask} title="Ctrl+K / Cmd+K"><Plus /> Add Task</button>}
               </div>
             </div>
             <div className="main-body">
